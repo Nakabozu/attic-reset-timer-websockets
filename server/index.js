@@ -1,20 +1,18 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import cors from "cors";
-import moment from 'moment';
-
-import { handler } from "../build/handler.js";
+const express = require("express");
+const http = require("http");
+const socket = require("socket.io");
+const cors = require("cors");
+const moment = require("moment");
 
 console.log("Starting Express Server");
 
 const PORT = 5174;
 const app = express();
 app.use(cors());
-const server = createServer(app);
+const server = http.createServer(app);
 let compareDate = moment();
 
-const io = new Server(server, {
+const io = new socket.Server(server, {
     handlePreflightRequest: (req, res) => {
         const headers = {
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -47,12 +45,6 @@ io.on("connection", (socket) => {
     });
 
 });
-
-
-
-// SvelteKit should handle everything else using Express middleware
-// https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
-app.use(handler);
 
 server.listen(PORT, () => {
     console.log(`Server is hosting`);
